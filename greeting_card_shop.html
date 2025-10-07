@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handmade Greeting Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #ff6b9d;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .cart-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        .cart-button:hover {
+            background: #ff4081;
+        }
+        
+        .cart-count {
+            background: white;
+            color: #ff6b9d;
+            border-radius: 50%;
+            padding: 2px 8px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.2em;
+        }
+        
+        .card-info {
+            padding: 20px;
+        }
+        
+        .card-name {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .card-price {
+            font-size: 1.5em;
+            color: #ff6b9d;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .add-to-cart, .sold-out {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .add-to-cart {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .add-to-cart:hover {
+            background: #45a049;
+        }
+        
+        .sold-out {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close {
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .remove-item {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .cart-total {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: right;
+            margin: 20px 0;
+            color: #ff6b9d;
+        }
+        
+        .checkout-button {
+            width: 100%;
+            padding: 15px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        .checkout-button:hover {
+            background: #ff4081;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .venmo-info {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .confirm-button {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌸 Handmade Greeting Cards 🌸</h1>
+            <p class="subtitle">Beautiful cards made with love!</p>
+        </header>
+        
+        <button class="cart-button" onclick="openCart()">
+            🛒 Cart <span class="cart-count" id="cartCount">0</span>
+        </button>
+        
+        <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+    
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <span class="close" onclick="closeCart()">&times;</span>
+            </div>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal"></div>
+            <div id="checkoutSection"></div>
+        </div>
+    </div>
+    
+    <script>
+        // EDIT THIS SECTION TO ADD YOUR CARDS!
+        // To add a card photo, upload it to the same folder and put the filename here
+        const cards = [
+            { id: 1, name: "Birthday Wishes", price: 5, image: "", sold: false },
+            { id: 2, name: "Thank You Card", price: 5, image: "", sold: false },
+            { id: 3, name: "Get Well Soon", price: 5, image: "", sold: false },
+            { id: 4, name: "Congratulations", price: 5, image: "", sold: false },
+            { id: 5, name: "Thinking of You", price: 5, image: "", sold: false },
+            { id: 6, name: "Happy Holidays", price: 5, image: "", sold: false }
+        ];
+        
+        // EDIT YOUR VENMO USERNAME HERE
+        const VENMO_USERNAME = "YourVenmoUsername";
+        
+        let cart = [];
+        
+        function displayCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-item';
+                
+                const imageElement = card.image 
+                    ? `<img src="${card.image}" alt="${card.name}" class="card-image">`
+                    : `<div class="card-image">📸 Photo Coming Soon</div>`;
+                
+                cardDiv.innerHTML = `
+                    ${imageElement}
+                    <div class="card-info">
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-price">$${card.price}</div>
+                        ${card.sold 
+                            ? '<button class="sold-out">SOLD OUT</button>'
+                            : `<button class="add-to-cart" onclick="addToCart(${card.id})">Add to Cart</button>`
+                        }
+                    </div>
+                `;
+                
+                grid.appendChild(cardDiv);
+            });
+        }
+        
+        function addToCart(cardId) {
+            const card = cards.find(c => c.id === cardId);
+            if (card && !card.sold && !cart.find(c => c.id === cardId)) {
+                cart.push(card);
+                updateCartCount();
+                alert('Added to cart! 🎉');
+            }
+        }
+        
+        function removeFromCart(cardId) {
+            cart = cart.filter(c => c.id !== cardId);
+            updateCartCount();
+            displayCart();
+        }
+        
+        function updateCartCount() {
+            document.getElementById('cartCount').textContent = cart.length;
+        }
+        
+        function openCart() {
+            displayCart();
+            document.getElementById('cartModal').style.display = 'flex';
+        }
+        
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+        
+        function displayCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const checkoutSection = document.getElementById('checkoutSection');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                cartTotal.innerHTML = '';
+                checkoutSection.innerHTML = '';
+                return;
+            }
+            
+            let total = 0;
+            cartItems.innerHTML = '';
+            
+            cart.forEach(card => {
+                total += card.price;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <div>
+                        <strong>${card.name}</strong><br>
+                        $${card.price}
+                    </div>
+                    <button class="remove-item" onclick="removeFromCart(${card.id})">Remove</button>
+                `;
+                cartItems.appendChild(itemDiv);
+            });
+            
+            cartTotal.innerHTML = `Total: $${total}`;
+            
+            checkoutSection.innerHTML = `
+                <button class="checkout-button" onclick="showVenmoInfo()">Checkout with Venmo</button>
+            `;
+        }
+        
+        function showVenmoInfo() {
+            const checkoutSection = document.getElementById('checkoutSection');
+            const total = cart.reduce((sum, card) => sum + card.price, 0);
+            
+            checkoutSection.innerHTML = `
+                <div class="venmo-info">
+                    <h3>Payment Instructions:</h3>
+                    <p>1. Open Venmo and send <strong>$${total}</strong> to:</p>
+                    <p style="font-size: 1.3em; color: #ff6b9d; font-weight: bold;">@${VENMO_USERNAME}</p>
+                    <p>2. In the payment note, include your name and email</p>
+                    <p>3. Click "Confirm Purchase" below after sending payment</p>
+                </div>
+                <button class="confirm-button" onclick="confirmPurchase()">I've Sent Payment on Venmo ✓</button>
+            `;
+        }
+        
+        function confirmPurchase() {
+            // Mark items as sold
+            cart.forEach(cartCard => {
+                const card = cards.find(c => c.id === cartCard.id);
+                if (card) card.sold = true;
+            });
+            
+            alert('Thank you for your purchase! 🎉\n\nYour cards will be prepared and shipped soon!');
+            
+            // Clear cart
+            cart = [];
+            updateCartCount();
+            closeCart();
+            displayCards();
+            
+            // In a real application, you'd save the sold status to a database
+            // For now, this will reset when the page reloads
+        }
+        
+        // Initialize
+        displayCards();
+        updateCartCount();
+    </script>
+</body>
+</html>
